@@ -7,7 +7,9 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="0dp">
 
-// hello
+<!-- // hello -->
+
+<!-- hi -->
 
     <RelativeLayout
         android:id="@+id/category_root"
