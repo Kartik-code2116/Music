@@ -21,13 +21,17 @@
         android:layout_height="48dp"
         android:background="@drawable/bg_search_bar"
         android:drawableStart="@drawable/ic_search"
-        android:drawableTint="@color/spotify_light_grey"
+        android:drawableEnd="@android:drawable/ic_menu_close_clear_cancel"
+        android:drawableTint="@color/spotify_black"
         android:drawablePadding="12dp"
         android:hint="What do you want to listen to?"
         android:textColorHint="@color/spotify_light_grey"
         android:textColor="@color/spotify_black"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1"
         android:layout_marginBottom="16dp" />
 
     <androidx.core.widget.NestedScrollView

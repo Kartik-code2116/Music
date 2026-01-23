@@ -44,8 +44,13 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         holder.title.setText(track.getTitle());
         holder.subtitle.setText(track.getArtist().getName());
 
+        String coverUrl = null;
+        if (track.getAlbum() != null) {
+            coverUrl = track.getAlbum().getCoverMedium();
+        }
+
         Glide.with(holder.itemView.getContext())
-                .load(track.getAlbum().getCoverMedium())
+                .load(coverUrl)
                 .placeholder(R.color.spotify_light_grey)
                 .into(holder.image);
 

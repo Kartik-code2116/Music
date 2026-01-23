@@ -9,6 +9,10 @@
         android:icon="@drawable/ic_search"
         android:title="Search" />
     <item
+        android:id="@+id/navigation_upload"
+        android:icon="@drawable/ic_upload"
+        android:title="Upload" />
+    <item
         android:id="@+id/navigation_library"
         android:icon="@drawable/ic_library"
         android:title="Your Library" />

@@ -24,6 +24,12 @@
         tools:layout="@layout/fragment_library" />
 
     <fragment
+        android:id="@+id/navigation_upload"
+        android:name="com.example.music.ui.upload.UploadFragment"
+        android:label="Upload"
+        tools:layout="@layout/fragment_upload" />
+
+    <fragment
         android:id="@+id/navigation_player"
         android:name="com.example.music.ui.player.PlayerFragment"
         android:label="Player"

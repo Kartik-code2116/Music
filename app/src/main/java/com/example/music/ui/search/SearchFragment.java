@@ -53,15 +53,28 @@ public class SearchFragment extends Fragment {
 
         // Categories Setup
         java.util.List<com.example.music.data.model.Category> categories = new java.util.ArrayList<>();
-        categories.add(new com.example.music.data.model.Category("Pop", android.graphics.Color.parseColor("#E13300")));
-        categories.add(new com.example.music.data.model.Category("Rock", android.graphics.Color.parseColor("#1E3264")));
+        categories.add(new com.example.music.data.model.Category("Pop", android.graphics.Color.parseColor("#E13300"))); // Orange-Red
+        categories.add(new com.example.music.data.model.Category("Rock", android.graphics.Color.parseColor("#E91429"))); // Red
         categories.add(
-                new com.example.music.data.model.Category("Hip-Hop", android.graphics.Color.parseColor("#BC5900")));
+                new com.example.music.data.model.Category("Hip-Hop", android.graphics.Color.parseColor("#BC5900"))); // Orange
         categories.add(
-                new com.example.music.data.model.Category("Classical", android.graphics.Color.parseColor("#7D4B32")));
-        categories.add(new com.example.music.data.model.Category("Jazz", android.graphics.Color.parseColor("#7744FF")));
+                new com.example.music.data.model.Category("Classical", android.graphics.Color.parseColor("#7D4B32"))); // Brown
+        categories.add(new com.example.music.data.model.Category("Jazz", android.graphics.Color.parseColor("#7744FF"))); // Purple
         categories
-                .add(new com.example.music.data.model.Category("Indie", android.graphics.Color.parseColor("#608108")));
+                .add(new com.example.music.data.model.Category("Indie", android.graphics.Color.parseColor("#608108"))); // Green
+        categories.add(new com.example.music.data.model.Category("R&B", android.graphics.Color.parseColor("#DC148C"))); // Pink
+        categories
+                .add(new com.example.music.data.model.Category("K-Pop", android.graphics.Color.parseColor("#148A08"))); // Green
+        categories.add(
+                new com.example.music.data.model.Category("Workout", android.graphics.Color.parseColor("#477D95"))); // Teal-Grey
+        categories
+                .add(new com.example.music.data.model.Category("Sleep", android.graphics.Color.parseColor("#1E3264"))); // Dark
+                                                                                                                        // Blue
+        categories
+                .add(new com.example.music.data.model.Category("Party", android.graphics.Color.parseColor("#AF2896"))); // Purple-Pink
+        categories
+                .add(new com.example.music.data.model.Category("Focus", android.graphics.Color.parseColor("#503750"))); // Dark
+                                                                                                                        // Purple
 
         categoryAdapter = new com.example.music.ui.adapters.CategoryAdapter(categories);
         recyclerCategories.setAdapter(categoryAdapter);
@@ -96,6 +109,18 @@ public class SearchFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
             }
+        });
+
+        searchBar.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (searchBar.getRight()
+                        - searchBar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    searchBar.setText("");
+                    return true;
+                }
+            }
+            return false;
         });
     }
 

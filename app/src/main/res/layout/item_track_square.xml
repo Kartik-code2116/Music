@@ -4,20 +4,25 @@
     android:layout_width="140dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginEnd="16dp">
+    android:padding="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp">
+        android:layout_width="124dp"
+        android:layout_height="124dp"
+        android:layout_gravity="center_horizontal"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/transparent">
 
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@color/spotify_light_grey" />
+            android:src="@color/spotify_card_grey" />
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
@@ -27,8 +32,9 @@
         android:layout_marginTop="8dp"
         android:text="Title"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         android:maxLines="1"
         android:ellipsize="end" />
 
@@ -36,10 +42,11 @@
         android:id="@+id/text_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         android:text="Subtitle"
         android:textColor="@color/spotify_grey"
-        android:textSize="12sp"
+        android:textSize="11sp"
+        android:fontFamily="sans-serif"
         android:maxLines="2"
         android:ellipsize="end" />
 
