@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.music.data.model.Track;
 
 import java.util.Locale;
 
@@ -113,6 +114,15 @@ public class PlayerFragment extends Fragment {
             btnRepeat.setColorFilter(
                     getResources().getColor(isRepeat ? R.color.spotify_green : R.color.spotify_grey, null));
         });
+
+        mainViewModel.getFavoriteIds().observe(getViewLifecycleOwner(), favoriteIds -> {
+            Track track = mainViewModel.getCurrentTrack().getValue();
+            if (track != null) {
+                boolean isFav = favoriteIds.contains(track.getId());
+                btnLike.setImageResource(isFav ? R.drawable.ic_play_arrow : R.drawable.ic_favorite_border);
+                btnLike.setColorFilter(getResources().getColor(isFav ? R.color.spotify_green : R.color.white, null));
+            }
+        });
     }
 
     private void setupClickListeners() {
@@ -127,6 +137,12 @@ public class PlayerFragment extends Fragment {
         btnPrevious.setOnClickListener(v -> mainViewModel.previousTrack());
         btnShuffle.setOnClickListener(v -> mainViewModel.toggleShuffle());
         btnRepeat.setOnClickListener(v -> mainViewModel.toggleRepeat());
+        btnLike.setOnClickListener(v -> {
+            Track track = mainViewModel.getCurrentTrack().getValue();
+            if (track != null) {
+                mainViewModel.toggleFavorite(track.getId());
+            }
+        });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -153,12 +169,19 @@ public class PlayerFragment extends Fragment {
         Palette.from(bitmap).generate(palette -> {
             if (palette != null) {
                 int dominantColor = palette.getDominantColor(getResources().getColor(R.color.spotify_black, null));
-                int darkMutedColor = palette.getDarkMutedColor(getResources().getColor(R.color.spotify_black, null));
 
+                // Create a beautiful vertical gradient from dominant color to black
                 GradientDrawable gradient = new GradientDrawable(
                         GradientDrawable.Orientation.TOP_BOTTOM,
                         new int[] { dominantColor, getResources().getColor(R.color.spotify_black, null) });
-                getView().setBackground(gradient);
+
+                View dynamicBg = getView().findViewById(R.id.dynamic_background);
+                if (dynamicBg != null) {
+                    dynamicBg.setBackground(gradient);
+                }
+
+                // Update accent color in ViewModel for other UI components to use
+                mainViewModel.setAccentColor(dominantColor);
             }
         });
     }

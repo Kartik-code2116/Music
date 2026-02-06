@@ -8,19 +8,24 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!-- Spotify Redesign Colors -->
     <color name="spotify_green">#1DB954</color>
     <color name="spotify_black">#121212</color>
     <color name="spotify_dark_grey">#181818</color>
-    <color name="spotify_card_grey">#282828</color>
-    <color name="spotify_light_grey">#535353</color>
     <color name="spotify_grey">#B3B3B3</color>
+    <color name="spotify_light_grey">#282828</color>
     <color name="spotify_white">#FFFFFF</color>
-    
-    <!-- Glassmorphism and Overlays -->
-    <color name="spotify_overlay_black">#CC121212</color>
-    <color name="spotify_overlay_grey">#80181818</color>
-    <color name="spotify_glass_white">#1AFFFFFF</color>
-    
+
+    <color name="accent_primary">@color/spotify_green</color>
+    <color name="page_background">@color/spotify_black</color>
+    <color name="card_surface">@color/spotify_light_grey</color>
+    <color name="text_main">@color/white</color>
+    <color name="text_secondary">@color/spotify_grey</color>
+
+    <!-- Glassmorphism helpers -->
+    <color name="glass_white">#26FFFFFF</color>
+    <color name="glass_white_heavy">#4DFFFFFF</color>
+
     <!-- Gradients -->
     <color name="gradient_start">#333333</color>
     <color name="gradient_end">#121212</color>

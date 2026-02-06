@@ -12,14 +12,37 @@ import com.example.music.R;
 import com.example.music.data.model.Album;
 import java.util.ArrayList;
 import java.util.List;
+import androidx.recyclerview.widget.DiffUtil;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
 
     private List<Album> albums = new ArrayList<>();
 
-    public void setAlbums(List<Album> albums) {
-        this.albums = albums;
-        notifyDataSetChanged();
+    public void setAlbums(List<Album> newAlbums) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return albums.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newAlbums.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return albums.get(oldItemPosition).getId() == newAlbums.get(newItemPosition).getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                return albums.get(oldItemPosition).getTitle().equals(newAlbums.get(newItemPosition).getTitle());
+            }
+        });
+
+        this.albums = new ArrayList<>(newAlbums);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @NonNull

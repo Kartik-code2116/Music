@@ -57,6 +57,17 @@ public class LibraryFragment extends Fragment {
             mainViewModel.playTrack(track);
         });
 
+        view.findViewById(R.id.btn_cloud).setOnClickListener(v -> {
+            mainViewModel.loadCloudTracks();
+        });
+
+        mainViewModel.getCloudTracks().observe(getViewLifecycleOwner(), tracks -> {
+            if (tracks != null && !tracks.isEmpty()) {
+                adapter.setItems(tracks);
+                mainViewModel.setPlaylist(tracks);
+            }
+        });
+
         checkPermissionsAndLoad();
     }
 

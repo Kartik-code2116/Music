@@ -1,35 +1,65 @@
 package com.example.music.ui.home;
 
+import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import com.example.music.data.api.RetrofitClient;
+import com.example.music.data.db.MusicDatabase;
+import com.example.music.data.db.TrackDao;
 import com.example.music.data.model.Album;
 import com.example.music.data.model.Artist;
-import com.example.music.data.model.ChartResponse;
+import com.example.music.data.model.DataResponse;
 import com.example.music.data.model.Track;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.example.music.data.repository.MusicRepository;
+import com.example.music.data.api.SupabaseApi;
 
-public class HomeViewModel extends ViewModel {
+public class HomeViewModel extends AndroidViewModel {
 
-    private final MutableLiveData<List<Track>> tracks = new MutableLiveData<>();
-    private final MutableLiveData<List<Album>> albums = new MutableLiveData<>();
-    private final MutableLiveData<List<Artist>> artists = new MutableLiveData<>();
+    private final TrackDao trackDao;
+    private final ExecutorService executorService;
     private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MusicRepository musicRepository;
+
+    public HomeViewModel(@NonNull Application application) {
+        super(application);
+        MusicDatabase db = MusicDatabase.getInstance(application);
+        trackDao = db.trackDao();
+        executorService = Executors.newSingleThreadExecutor();
+        musicRepository = new MusicRepository(RetrofitClient.getApi());
+    }
 
     public LiveData<List<Track>> getTracks() {
-        return tracks;
+        return trackDao.getAllTracks();
     }
 
     public LiveData<List<Album>> getAlbums() {
+        // We can derive albums from tracks in the fragment or create a separate DAO
+        // query
+        // For simplicity, let's derive them in the fragment or use a MediatorLiveData
+        MutableLiveData<List<Album>> albums = new MutableLiveData<>();
+        getTracks().observeForever(trackList -> {
+            if (trackList != null) {
+                java.util.Set<String> albumIds = new java.util.HashSet<>();
+                List<Album> albumList = new java.util.ArrayList<>();
+                for (Track track : trackList) {
+                    Album album = track.getAlbum();
+                    if (album != null && !albumIds.contains(String.valueOf(album.getId()))) {
+                        albumIds.add(String.valueOf(album.getId()));
+                        albumList.add(album);
+                    }
+                }
+                albums.postValue(albumList);
+            }
+        });
         return albums;
-    }
-
-    public LiveData<List<Artist>> getArtists() {
-        return artists;
     }
 
     public LiveData<String> getError() {
@@ -37,37 +67,14 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void fetchCharts() {
-        // Using Top Worldwide Playlist ID: 3155776842 instead of /chart
-        RetrofitClient.getApi().getPlaylistTracks(3155776842L)
-                .enqueue(new Callback<com.example.music.data.model.DataResponse<Track>>() {
-                    @Override
-                    public void onResponse(Call<com.example.music.data.model.DataResponse<Track>> call,
-                            Response<com.example.music.data.model.DataResponse<Track>> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            List<Track> trackList = response.body().getData();
-                            tracks.postValue(trackList);
-
-                            // Extract unique albums from tracks
-                            java.util.Set<String> albumIds = new java.util.HashSet<>();
-                            List<Album> albumList = new java.util.ArrayList<>();
-                            for (Track track : trackList) {
-                                Album album = track.getAlbum();
-                                if (album != null && !albumIds.contains(String.valueOf(album.getId()))) {
-                                    albumIds.add(String.valueOf(album.getId()));
-                                    albumList.add(album);
-                                }
-                            }
-                            albums.postValue(albumList);
-
-                        } else {
-                            error.postValue("Failed to load charts: " + response.message());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<com.example.music.data.model.DataResponse<Track>> call, Throwable t) {
-                        error.postValue("Error: " + t.getMessage());
-                    }
+        musicRepository.getChartTracks().observeForever(tracks -> {
+            if (tracks != null) {
+                executorService.execute(() -> {
+                    trackDao.insertTracks(tracks);
                 });
+            } else {
+                error.postValue("Failed to load cloud tracks from Supabase");
+            }
+        });
     }
 }

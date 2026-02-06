@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:layout_margin="4dp"
-    app:cardBackgroundColor="@color/spotify_card_grey"
+    app:cardBackgroundColor="@color/spotify_light_grey"
     app:cardCornerRadius="4dp"
     app:cardElevation="0dp"
     android:clickable="true"

@@ -65,15 +65,15 @@
                 app:strokeColor="@color/spotify_grey" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cloud"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Albums"
+                android:text="Cloud"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 app:cornerRadius="20dp"
                 app:strokeColor="@color/spotify_grey" />
-
         </LinearLayout>
     </HorizontalScrollView>
 

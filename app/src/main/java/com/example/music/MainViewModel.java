@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.music.data.model.Track;
+import com.example.music.data.repository.MusicRepository;
+import com.example.music.data.api.RetrofitClient;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MainViewModel extends ViewModel {
@@ -16,6 +17,14 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<List<Track>> playlist = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isShuffle = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isRepeat = new MutableLiveData<>(false);
+    private final MutableLiveData<List<Long>> favoriteIds = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Integer> accentColor = new MutableLiveData<>(0xFF1DB954); // Default Spotify Green
+    private final MutableLiveData<List<Track>> cloudTracks = new MutableLiveData<>(new ArrayList<>());
+    private final MusicRepository musicRepository;
+
+    public MainViewModel() {
+        musicRepository = new MusicRepository(RetrofitClient.getApi());
+    }
 
     public LiveData<Track> getCurrentTrack() {
         return currentTrack;
@@ -45,6 +54,47 @@ public class MainViewModel extends ViewModel {
         return isRepeat;
     }
 
+    public LiveData<List<Long>> getFavoriteIds() {
+        return favoriteIds;
+    }
+
+    public LiveData<Integer> getAccentColor() {
+        return accentColor;
+    }
+
+    public void setAccentColor(int color) {
+        accentColor.setValue(color);
+    }
+
+    public void toggleFavorite(long trackId) {
+        List<Long> current = favoriteIds.getValue();
+        if (current == null)
+            current = new ArrayList<>();
+        if (current.contains(trackId)) {
+            current.remove(trackId);
+        } else {
+            current.add(trackId);
+        }
+        favoriteIds.setValue(new ArrayList<>(current)); // Ensure update notification
+    }
+
+    public boolean isFavorite(long trackId) {
+        List<Long> current = favoriteIds.getValue();
+        return current != null && current.contains(trackId);
+    }
+
+    public LiveData<List<Track>> getCloudTracks() {
+        return cloudTracks;
+    }
+
+    public void loadCloudTracks() {
+        musicRepository.getCloudTracks().observeForever(tracks -> {
+            if (tracks != null) {
+                cloudTracks.setValue(tracks);
+            }
+        });
+    }
+
     public void setPlaylist(List<Track> tracks) {
         playlist.setValue(tracks);
     }
@@ -67,17 +117,24 @@ public class MainViewModel extends ViewModel {
     }
 
     public void toggleShuffle() {
-        isShuffle.setValue(Boolean.FALSE.equals(isShuffle.getValue()) ? true : false);
+        isShuffle.setValue(!Boolean.TRUE.equals(isShuffle.getValue()));
     }
 
     public void toggleRepeat() {
-        isRepeat.setValue(Boolean.FALSE.equals(isRepeat.getValue()) ? true : false);
+        isRepeat.setValue(!Boolean.TRUE.equals(isRepeat.getValue()));
     }
 
     public void nextTrack() {
         List<Track> tracks = playlist.getValue();
         Track current = currentTrack.getValue();
-        if (tracks == null || tracks.isEmpty() || current == null) return;
+        if (tracks == null || tracks.isEmpty() || current == null)
+            return;
+
+        if (Boolean.TRUE.equals(isShuffle.getValue())) {
+            int randomIndex = (int) (Math.random() * tracks.size());
+            playTrack(tracks.get(randomIndex));
+            return;
+        }
 
         int index = -1;
         for (int i = 0; i < tracks.size(); i++) {
@@ -96,7 +153,8 @@ public class MainViewModel extends ViewModel {
     public void previousTrack() {
         List<Track> tracks = playlist.getValue();
         Track current = currentTrack.getValue();
-        if (tracks == null || tracks.isEmpty() || current == null) return;
+        if (tracks == null || tracks.isEmpty() || current == null)
+            return;
 
         int index = -1;
         for (int i = 0; i < tracks.size(); i++) {

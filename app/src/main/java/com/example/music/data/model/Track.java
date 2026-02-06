@@ -1,8 +1,13 @@
 package com.example.music.data.model;
 
 import com.google.gson.annotations.SerializedName;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.Embedded;
 
+@Entity(tableName = "tracks")
 public class Track {
+    @PrimaryKey
     @SerializedName("id")
     private long id;
     @SerializedName("title")
@@ -15,8 +20,10 @@ public class Track {
     private int duration;
     @SerializedName("preview")
     private String preview;
+    @Embedded(prefix = "artist_")
     @SerializedName("artist")
     private Artist artist;
+    @Embedded(prefix = "album_")
     @SerializedName("album")
     private Album album;
 

@@ -24,10 +24,12 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mini_player_container"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        app:cardCornerRadius="0dp"
-        app:cardBackgroundColor="#282828"
-        app:cardElevation="8dp"
+        android:layout_height="72dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="@color/spotify_dark_grey"
+        app:cardElevation="12dp"
         app:strokeWidth="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/nav_view"
@@ -36,20 +38,21 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/glass_white">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:paddingStart="8dp"
+                android:paddingStart="12dp"
                 android:paddingEnd="16dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    app:cardCornerRadius="4dp"
+                    app:cardCornerRadius="6dp"
                     app:cardElevation="0dp">
                     <ImageView
                         android:id="@+id/mini_player_image"
@@ -73,7 +76,7 @@
                         android:text="Song Title"
                         android:textColor="@color/white"
                         android:textStyle="bold"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:maxLines="1"
                         android:ellipsize="end"/>
 
@@ -98,8 +101,8 @@
 
                 <ImageView
                     android:id="@+id/mini_player_play_pause"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:src="@drawable/ic_pause"
                     app:tint="@color/white"/>
 
@@ -111,8 +114,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_alignParentBottom="true"
-                android:progress="30"
-                android:progressDrawable="@drawable/custom_seekbar_progress" />
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="4dp"
+                android:progress="0"
+                android:progressTint="@color/spotify_green"
+                android:progressBackgroundTint="@color/spotify_grey" />
 
         </RelativeLayout>
 
@@ -120,13 +126,13 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:background="@color/spotify_dark_grey"
+        android:background="@color/spotify_black"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
+        app:itemIconTint="@color/spotify_grey"
+        app:itemTextColor="@color/spotify_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

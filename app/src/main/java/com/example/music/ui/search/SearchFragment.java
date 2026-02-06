@@ -13,14 +13,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.music.R;
+import com.example.music.data.repository.MusicRepository;
 import com.example.music.data.api.RetrofitClient;
-import com.example.music.data.model.DataResponse;
-import com.example.music.data.model.Track;
-import com.example.music.ui.adapters.CategoryAdapter;
+import com.example.music.MainViewModel;
 import com.example.music.ui.adapters.TrackAdapter;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.music.ui.adapters.CategoryAdapter;
 
 public class SearchFragment extends Fragment {
 
@@ -29,6 +26,8 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerResults;
     private RecyclerView recyclerCategories;
     private View browseAllHeader;
+    private MusicRepository musicRepository;
+    private MainViewModel mainViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,10 +41,9 @@ public class SearchFragment extends Fragment {
         EditText searchBar = view.findViewById(R.id.search_bar);
         recyclerResults = view.findViewById(R.id.recycler_search_results);
         recyclerCategories = view.findViewById(R.id.recycler_categories);
-        browseAllHeader = view.findViewById(R.id.browse_all_header); // Needs ID in XML or just manage via parent
-
-        com.example.music.MainViewModel mainViewModel = new ViewModelProvider(requireActivity())
-                .get(com.example.music.MainViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity())
+                .get(MainViewModel.class);
+        musicRepository = new MusicRepository(RetrofitClient.getApi());
 
         recyclerResults.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new TrackAdapter();
@@ -76,7 +74,7 @@ public class SearchFragment extends Fragment {
                 .add(new com.example.music.data.model.Category("Focus", android.graphics.Color.parseColor("#503750"))); // Dark
                                                                                                                         // Purple
 
-        categoryAdapter = new com.example.music.ui.adapters.CategoryAdapter(categories);
+        categoryAdapter = new CategoryAdapter(categories);
         recyclerCategories.setAdapter(categoryAdapter);
 
         adapter.setOnItemClickListener(track -> {
@@ -125,17 +123,9 @@ public class SearchFragment extends Fragment {
     }
 
     private void performSearch(String query) {
-        RetrofitClient.getApi().searchTracks(query).enqueue(new Callback<DataResponse<Track>>() {
-            @Override
-            public void onResponse(Call<DataResponse<Track>> call, Response<DataResponse<Track>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    adapter.setTracks(response.body().getData());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<DataResponse<Track>> call, Throwable t) {
-                // Handle error
+        musicRepository.searchTracks(query).observe(getViewLifecycleOwner(), tracks -> {
+            if (tracks != null) {
+                adapter.setTracks(tracks);
             }
         });
     }

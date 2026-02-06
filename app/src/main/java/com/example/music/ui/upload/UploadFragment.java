@@ -15,18 +15,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.music.R;
+import com.example.music.data.model.Album;
+import com.example.music.data.model.Artist;
 import com.example.music.data.model.Track;
 import com.example.music.data.repository.CommunityRepository;
 import com.example.music.ui.adapters.TrackAdapter;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.Objects;
 
 public class UploadFragment extends Fragment {
 
     private TextInputEditText editTitle;
     private TextInputEditText editArtist;
     private Button btnSelectFile;
-    private Button btnUpload;
-    private RecyclerView recyclerCommunity;
     private TrackAdapter adapter;
 
     @Nullable
@@ -43,8 +45,8 @@ public class UploadFragment extends Fragment {
         editTitle = view.findViewById(R.id.edit_song_title);
         editArtist = view.findViewById(R.id.edit_artist_name);
         btnSelectFile = view.findViewById(R.id.btn_select_file);
-        btnUpload = view.findViewById(R.id.btn_upload);
-        recyclerCommunity = view.findViewById(R.id.recycler_community_uploads);
+        Button btnUpload = view.findViewById(R.id.btn_upload);
+        RecyclerView recyclerCommunity = view.findViewById(R.id.recycler_community_uploads);
 
         // Setup RecyclerView
         recyclerCommunity.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -60,8 +62,8 @@ public class UploadFragment extends Fragment {
         });
 
         btnUpload.setOnClickListener(v -> {
-            String title = editTitle.getText().toString();
-            String artist = editArtist.getText().toString();
+            String title = Objects.requireNonNull(editTitle.getText()).toString();
+            String artist = Objects.requireNonNull(editArtist.getText()).toString();
 
             if (TextUtils.isEmpty(title) || TextUtils.isEmpty(artist)) {
                 Toast.makeText(getContext(), "Please enter title and artist", Toast.LENGTH_SHORT).show();
@@ -70,13 +72,19 @@ public class UploadFragment extends Fragment {
 
             // Simulate upload
             Track newTrack = new Track();
+            newTrack.setId(System.currentTimeMillis()); // Use timestamp as ID for local uploads
             newTrack.setTitle(title);
-            com.example.music.data.model.Artist artistObj = new com.example.music.data.model.Artist();
+            
+            Artist artistObj = new Artist();
             artistObj.setName(artist);
             newTrack.setArtist(artistObj);
-            // newTrack.setDuration(180); // Dummy duration
 
-            CommunityRepository.getInstance().addTrack(newTrack);
+            Album albumObj = new Album();
+            albumObj.setTitle("Upload");
+            albumObj.setCoverMedium("");
+            newTrack.setAlbum(albumObj);
+
+            CommunityRepository.getInstance(requireContext()).addTrack(newTrack);
 
             // Clear input
             editTitle.setText("");
@@ -84,13 +92,11 @@ public class UploadFragment extends Fragment {
             btnSelectFile.setText("Select File");
 
             Toast.makeText(getContext(), "Upload Successful!", Toast.LENGTH_SHORT).show();
-
-            // Refresh list
-            loadCommunityTracks();
         });
     }
 
     private void loadCommunityTracks() {
-        adapter.setTracks(CommunityRepository.getInstance().getUploadedTracks());
+        CommunityRepository.getInstance(requireContext()).getUploadedTracks().observe(getViewLifecycleOwner(),
+                tracks -> adapter.setTracks(tracks));
     }
 }

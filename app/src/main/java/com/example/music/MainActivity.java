@@ -65,8 +65,14 @@ public class MainActivity extends AppCompatActivity {
         miniPlayerProgress = findViewById(R.id.mini_player_progress);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
+        if (navView == null)
+            return; // Prevent crash if layout inflation failed
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_activity_main);
+        if (navHostFragment == null)
+            return;
+
         navController = navHostFragment.getNavController();
         NavigationUI.setupWithNavController(navView, navController);
 
@@ -117,12 +123,20 @@ public class MainActivity extends AppCompatActivity {
                     progressHandler.removeCallbacks(updateProgressRunnable);
                 }
             }
-            miniPlayerPlayPause.setImageResource(isPlaying ? R.drawable.ic_pause : R.drawable.ic_play_arrow);
+            if (miniPlayerPlayPause != null) {
+                miniPlayerPlayPause.setImageResource(isPlaying ? R.drawable.ic_pause : R.drawable.ic_play_arrow);
+            }
         });
 
         mainViewModel.getCurrentPosition().observe(this, position -> {
             if (mediaController != null && Math.abs(mediaController.getCurrentPosition() - position) > 2000) {
                 mediaController.seekTo(position);
+            }
+        });
+
+        mainViewModel.getAccentColor().observe(this, color -> {
+            if (miniPlayerProgress != null) {
+                miniPlayerProgress.getProgressDrawable().setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
             }
         });
     }
@@ -144,7 +158,11 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 findViewById(R.id.nav_view).setVisibility(View.VISIBLE);
                 if (mainViewModel.getCurrentTrack().getValue() != null) {
-                    miniPlayerContainer.setVisibility(View.VISIBLE);
+                    if (miniPlayerContainer.getVisibility() != View.VISIBLE) {
+                        miniPlayerContainer.setVisibility(View.VISIBLE);
+                        miniPlayerContainer.setAlpha(0f);
+                        miniPlayerContainer.animate().alpha(1f).setDuration(300).start();
+                    }
                 }
             }
         });

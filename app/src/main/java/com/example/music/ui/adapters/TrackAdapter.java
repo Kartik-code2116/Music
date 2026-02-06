@@ -12,6 +12,7 @@ import com.example.music.R;
 import com.example.music.data.model.Track;
 import java.util.ArrayList;
 import java.util.List;
+import androidx.recyclerview.widget.DiffUtil;
 
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
 
@@ -26,9 +27,34 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         this.listener = listener;
     }
 
-    public void setTracks(List<Track> tracks) {
-        this.tracks = tracks;
-        notifyDataSetChanged();
+    public void setTracks(List<Track> newTracks) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return tracks.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newTracks.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return tracks.get(oldItemPosition).getId() == newTracks.get(newItemPosition).getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                Track oldTrack = tracks.get(oldItemPosition);
+                Track newTrack = newTracks.get(newItemPosition);
+                return oldTrack.getTitle().equals(newTrack.getTitle()) &&
+                        oldTrack.getArtist().getName().equals(newTrack.getArtist().getName());
+            }
+        });
+
+        this.tracks = new ArrayList<>(newTracks);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @NonNull
