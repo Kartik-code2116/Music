@@ -20,118 +20,125 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Floating Mini Player -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mini_player_container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="72dp"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="8dp"
-        app:cardBackgroundColor="@color/spotify_dark_grey"
-        app:cardElevation="12dp"
-        app:strokeWidth="0dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="6dp"
+        app:cardCornerRadius="20dp"
+        app:cardBackgroundColor="#FF1E1E1E"
+        app:cardElevation="20dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="#FF2A2A2A"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/nav_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/glass_white">
+            android:paddingStart="10dp"
+            android:paddingEnd="14dp">
 
+            <!-- Album Art -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mini_art_card"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:id="@+id/mini_player_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@color/spotify_light_grey" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Title + Artist -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="16dp"
-                android:orientation="horizontal">
+                android:id="@+id/mini_text_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintStart_toEndOf="@id/mini_art_card"
+                app:layout_constraintEnd_toStartOf="@id/mini_player_play_pause"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    app:cardCornerRadius="6dp"
-                    app:cardElevation="0dp">
-                    <ImageView
-                        android:id="@+id/mini_player_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@color/spotify_light_grey"/>
-                </com.google.android.material.card.MaterialCardView>
-
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/mini_player_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="12dp"
-                    android:orientation="vertical">
+                    android:text="Song Title"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true" />
 
-                    <TextView
-                        android:id="@+id/mini_player_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Song Title"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
-                        android:maxLines="1"
-                        android:ellipsize="end"/>
-
-                    <TextView
-                        android:id="@+id/mini_player_artist"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Artist"
-                        android:textColor="@color/spotify_grey"
-                        android:textSize="12sp"
-                        android:maxLines="1"
-                        android:ellipsize="end"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/mini_player_devices"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_devices"
-                    app:tint="@color/spotify_grey" />
-
-                <ImageView
-                    android:id="@+id/mini_player_play_pause"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_pause"
-                    app:tint="@color/white"/>
-
+                <TextView
+                    android:id="@+id/mini_player_artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Artist"
+                    android:textColor="@color/spotify_grey"
+                    android:textSize="12sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
             </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/mini_player_progress"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginBottom="4dp"
-                android:progress="0"
-                android:progressTint="@color/spotify_green"
-                android:progressBackgroundTint="@color/spotify_grey" />
+            <!-- Play/Pause Button -->
+            <ImageView
+                android:id="@+id/mini_player_play_pause"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_pause"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Progress bar pinned to bottom -->
+        <ProgressBar
+            android:id="@+id/mini_player_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_gravity="bottom"
+            android:progress="0"
+            android:progressTint="@color/spotify_green"
+            android:progressBackgroundTint="#FF333333" />
 
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/spotify_black"
+        android:background="#FF181818"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/spotify_grey"
-        app:itemTextColor="@color/spotify_grey"
+        app:itemIconTint="@color/nav_item_color_state"
+        app:itemTextColor="@color/nav_item_color_state"
+        app:itemRippleColor="@color/spotify_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

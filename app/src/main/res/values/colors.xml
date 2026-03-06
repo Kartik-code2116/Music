@@ -16,17 +16,38 @@
     <color name="spotify_light_grey">#282828</color>
     <color name="spotify_white">#FFFFFF</color>
 
-    <color name="accent_primary">@color/spotify_green</color>
+    <!-- Surface / Card -->
+    <color name="surface_1">#1A1A1A</color>
+    <color name="surface_2">#1E1E1E</color>
+    <color name="surface_3">#242424</color>
+    <color name="surface_elevated">#2A2A2A</color>
+
+    <!-- Semantic aliases -->
+    <color name="accent_primary">#1DB954</color>
+    <color name="accent_purple">#BB86FC</color>
+    <color name="accent_blue">#3D9BE9</color>
+    <color name="accent_orange">#E87D0D</color>
     <color name="page_background">@color/spotify_black</color>
     <color name="card_surface">@color/spotify_light_grey</color>
     <color name="text_main">@color/white</color>
     <color name="text_secondary">@color/spotify_grey</color>
+    <color name="text_hint">#66FFFFFF</color>
 
     <!-- Glassmorphism helpers -->
     <color name="glass_white">#26FFFFFF</color>
     <color name="glass_white_heavy">#4DFFFFFF</color>
+    <color name="glass_dark">#99000000</color>
+
+    <!-- Divider / stroke -->
+    <color name="divider">#FF2A2A2A</color>
+    <color name="stroke_subtle">#FF333333</color>
 
     <!-- Gradients -->
     <color name="gradient_start">#333333</color>
     <color name="gradient_end">#121212</color>
+
+    <!-- Status / feedback -->
+    <color name="color_success">#1DB954</color>
+    <color name="color_error">#CF6679</color>
+    <color name="color_warning">#E87D0D</color>
 </resources>

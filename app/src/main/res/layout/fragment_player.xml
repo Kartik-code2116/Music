@@ -7,45 +7,72 @@
     android:layout_height="match_parent"
     android:background="@color/spotify_black">
 
-    <!-- Dynamic Background View -->
+    <!-- Dynamic gradient background -->
     <View
         android:id="@+id/dynamic_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_main_gradient" />
 
+    <!-- Subtle dark scrim so text is always readable -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000" />
+
+    <!-- ── Top Bar ── -->
     <ImageView
         android:id="@+id/btn_close"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_margin="24dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:padding="10dp"
         android:src="@drawable/ic_expand_more"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/player_header_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="PLAYING FROM SUPABASE"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        android:letterSpacing="0.1"
+        android:text="NOW PLAYING"
+        android:textColor="#CCFFFFFF"
+        android:textSize="11sp"
+        android:letterSpacing="0.2"
         android:textStyle="bold"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@id/btn_close"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_more"
+        app:layout_constraintStart_toEndOf="@id/btn_close"
         app:layout_constraintTop_toTopOf="@id/btn_close" />
 
+    <ImageView
+        android:id="@+id/btn_more"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_more_vert"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- ── Album Art Card ── -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_album_art"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="48dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="24dp"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="40dp"
+        app:cardBackgroundColor="@color/spotify_light_grey"
+        app:strokeWidth="0dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,19 +86,21 @@
             android:src="@color/spotify_light_grey" />
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- ── Song Info Row ── -->
     <TextView
         android:id="@+id/player_song_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="28dp"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
         android:text="Song Title"
         android:textColor="@color/white"
-        android:textSize="26sp"
+        android:textSize="22sp"
         android:textStyle="bold"
+        android:letterSpacing="-0.01"
         app:layout_constraintEnd_toStartOf="@+id/btn_like"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/card_album_art" />
@@ -84,44 +113,49 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="Artist Name"
-        android:textColor="@color/spotify_grey"
-        android:textSize="18sp"
+        android:textColor="#99FFFFFF"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="@id/player_song_title"
         app:layout_constraintStart_toStartOf="@id/player_song_title"
         app:layout_constraintTop_toBottomOf="@id/player_song_title" />
 
     <ImageView
         android:id="@+id/btn_like"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="20dp"
+        android:padding="8dp"
         android:src="@drawable/ic_favorite_border"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="@id/player_artist_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/player_song_title"
-        app:tint="@color/white" />
+        app:layout_constraintTop_toTopOf="@id/player_song_title" />
 
-    <SeekBar
+    <!-- ── SeekBar ── -->
+    <com.example.music.ui.widget.MusicSeekBar
         android:id="@+id/player_seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginHorizontal="16dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="0dp"
-        android:progressTint="@color/white"
-        android:thumbTint="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/player_artist_name" />
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        app:layout_constraintTop_toBottomOf="@id/player_artist_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/tv_current_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="24dp"
         android:text="0:00"
-        android:textColor="@color/spotify_grey"
+        android:textColor="#99FFFFFF"
         android:textSize="12sp"
+        android:letterSpacing="0.03"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/player_seekbar" />
 
@@ -129,101 +163,158 @@
         android:id="@+id/tv_total_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:text="3:45"
-        android:textColor="@color/spotify_grey"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="24dp"
+        android:text="0:30"
+        android:textColor="#99FFFFFF"
         android:textSize="12sp"
+        android:letterSpacing="0.03"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/player_seekbar" />
 
+    <!-- ── Playback Controls ── -->
     <LinearLayout
         android:id="@+id/controls_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/tv_current_time">
-
-        <ImageView
-            android:id="@+id/btn_shuffle"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="24dp"
-            android:src="@drawable/ic_shuffle"
-            app:tint="@color/spotify_grey" />
-
-        <ImageView
-            android:id="@+id/btn_previous"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_skip_previous"
-            app:tint="@color/white" />
-
-        <ImageView
-            android:id="@+id/btn_play_pause"
-            android:layout_width="86dp"
-            android:layout_height="86dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/bg_play_circle"
-            android:padding="20dp"
-            android:src="@drawable/ic_pause"
-            app:tint="@color/spotify_black" />
-
-        <ImageView
-            android:id="@+id/btn_next"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_skip_next"
-            app:tint="@color/white" />
-
-        <ImageView
-            android:id="@+id/btn_repeat"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="24dp"
-            android:src="@drawable/ic_repeat"
-            app:tint="@color/spotify_grey" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginHorizontal="32dp"
+        android:layout_marginHorizontal="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/controls_layout">
+        app:layout_constraintTop_toBottomOf="@id/tv_current_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Shuffle -->
         <ImageView
-            android:id="@+id/btn_devices"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_devices"
+            android:id="@+id/btn_shuffle"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_shuffle"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:tint="@color/spotify_grey" />
 
-        <View
+        <Space
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <!-- Previous -->
         <ImageView
-            android:id="@+id/btn_share"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="24dp"
-            android:src="@drawable/ic_share"
+            android:id="@+id/btn_previous"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_skip_previous"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/white" />
+
+        <!-- Play / Pause -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginHorizontal="12dp"
+            app:cardCornerRadius="36dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardElevation="12dp">
+
+            <ImageView
+                android:id="@+id/btn_play_pause"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                android:src="@drawable/ic_pause"
+                app:tint="@color/spotify_black" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Next -->
+        <ImageView
+            android:id="@+id/btn_next"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_skip_next"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/white" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Repeat -->
+        <ImageView
+            android:id="@+id/btn_repeat"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_repeat"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:tint="@color/spotify_grey" />
 
+    </LinearLayout>
+
+    <!-- ── Bottom Extras ── -->
+    <LinearLayout
+        android:id="@+id/extra_controls_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="28dp"
+        android:layout_marginBottom="28dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Devices / Speed -->
+        <ImageView
+            android:id="@+id/btn_devices"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_devices"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#80FFFFFF" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Share -->
+        <ImageView
+            android:id="@+id/btn_share"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_share"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#80FFFFFF" />
+
+        <!-- Save to Cloud -->
+        <ImageView
+            android:id="@+id/btn_save_cloud"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_cloud_upload"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Save to cloud"
+            app:tint="#80FFFFFF" />
+
+        <!-- Queue -->
         <ImageView
             android:id="@+id/btn_queue"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
             android:src="@drawable/ic_queue"
-            app:tint="@color/spotify_grey" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#80FFFFFF" />
 
     </LinearLayout>
 

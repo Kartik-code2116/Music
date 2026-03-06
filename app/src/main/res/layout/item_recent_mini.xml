@@ -2,11 +2,12 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_margin="4dp"
-    app:cardBackgroundColor="@color/spotify_light_grey"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="0dp"
+    android:layout_height="64dp"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="#FF1E1E1E"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground">
@@ -16,21 +17,23 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+        <!-- Album Art -->
         <ImageView
             android:id="@+id/image_mini"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:scaleType="centerCrop"
-            android:src="@color/spotify_grey" />
+            android:src="@color/spotify_light_grey" />
 
+        <!-- Title -->
         <TextView
             android:id="@+id/text_mini_title"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="10dp"
             android:text="Playlist Name"
             android:textColor="@color/white"
             android:textSize="12sp"

@@ -14,10 +14,10 @@
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/spotify_black</item>
         <item name="android:textColor">@color/white</item>
-        
+
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
     </style>
-    
+
     <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
         <item name="itemIconTint">@color/nav_item_color_state</item>
@@ -29,4 +29,19 @@
         <item name="colorPrimary">@color/spotify_green</item>
         <item name="colorOnPrimary">@color/white</item>
     </style>
+
+    <!-- Dark AlertDialog theme matching Spotify aesthetic -->
+    <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/spotify_green</item>
+        <item name="colorAccent">@color/spotify_green</item>
+        <item name="android:background">@color/spotify_dark_grey</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/spotify_grey</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogButtonStyle</item>
+    </style>
+
+    <style name="AlertDialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/spotify_green</item>
+    </style>
+
 </resources>

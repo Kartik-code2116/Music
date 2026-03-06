@@ -34,4 +34,5 @@
         android:name="com.example.music.ui.player.PlayerFragment"
         android:label="Player"
         tools:layout="@layout/fragment_player" />
+
 </navigation>
