@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.DeezerAlbum
 import com.example.music.data.model.Track
+import com.example.music.data.repository.AudiusRepository
 import com.example.music.data.repository.DeezerRepository
 import com.example.music.data.repository.ItunesRepository
 import com.example.music.data.repository.JamendoRepository
@@ -19,6 +20,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val deezerRepository = DeezerRepository()
     private val itunesRepository = ItunesRepository()
     private val jamendoRepository = JamendoRepository()
+    private val audiusRepository = AudiusRepository()
     private val supabaseRepository = SupabaseRepository()
 
     // Deezer — chart tracks (grid + "Trending Now" row)
@@ -36,6 +38,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     // Jamendo — full free songs row
     private val _jamendoTracks = MutableLiveData<List<Track>>()
     val jamendoTracks: LiveData<List<Track>> get() = _jamendoTracks
+
+    private val _hindiEnglishTracks = MutableLiveData<List<Track>>()
+    val hindiEnglishTracks: LiveData<List<Track>> get() = _hindiEnglishTracks
+
+    private val _audiusTracks = MutableLiveData<List<Track>>()
+    val audiusTracks: LiveData<List<Track>> get() = _audiusTracks
 
     // Supabase — saved/uploaded tracks
     private val _savedTracks = MutableLiveData<List<Track>>()
@@ -57,6 +65,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val deezerAlbumsDeferred  = async { deezerRepository.getChartAlbums(20) }
             val itunesDeferred        = async { itunesRepository.getTopHits(30) }
             val jamendoDeferred       = async { jamendoRepository.getPopularTracks(20) }
+            val audiusDeferred        = async { audiusRepository.getTrendingTracks(30) }
+            val hindiDeferred         = async { itunesRepository.searchTracks("hindi bollywood songs", 20) }
+            val englishDeferred       = async { itunesRepository.searchTracks("english pop hits", 20) }
 
             // Deezer tracks
             deezerTracksDeferred.await()
@@ -77,7 +88,31 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 .onSuccess { _jamendoTracks.postValue(it) }
                 .onFailure { _error.postValue("Jamendo: ${it.localizedMessage}") }
 
+            audiusDeferred.await()
+                .onSuccess { _audiusTracks.postValue(it) }
+                .onFailure { _error.postValue("Audius: ${it.localizedMessage}") }
+
+            val hindiTracks = hindiDeferred.await().getOrElse { emptyList() }
+            val englishTracks = englishDeferred.await().getOrElse { emptyList() }
+            _hindiEnglishTracks.postValue(interleaveAndDeduplicate(hindiTracks, englishTracks))
+
             _isLoading.value = false
+        }
+    }
+
+    private fun interleaveAndDeduplicate(first: List<Track>, second: List<Track>): List<Track> {
+        val mixed = buildList {
+            val a = first.iterator()
+            val b = second.iterator()
+            while (a.hasNext() || b.hasNext()) {
+                if (a.hasNext()) add(a.next())
+                if (b.hasNext()) add(b.next())
+            }
+        }
+        val seen = mutableSetOf<String>()
+        return mixed.filter { track ->
+            val key = "${track.title.lowercase().trim()}|${track.artist.name.lowercase().trim()}"
+            seen.add(key)
         }
     }
 

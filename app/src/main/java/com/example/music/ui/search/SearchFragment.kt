@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.music.MainViewModel
 import com.example.music.data.model.Category
+import com.example.music.data.repository.AudiusRepository
 import com.example.music.data.repository.DeezerRepository
 import com.example.music.data.repository.ItunesRepository
 import com.example.music.data.repository.JamendoRepository
@@ -37,6 +38,7 @@ class SearchFragment : Fragment() {
     private val deezerRepository  = DeezerRepository()
     private val itunesRepository   = ItunesRepository()
     private val jamendoRepository  = JamendoRepository()
+    private val audiusRepository   = AudiusRepository()
 
     private var searchJob: Job? = null
 
@@ -68,8 +70,7 @@ class SearchFragment : Fragment() {
         binding.recyclerSearchResults.adapter = searchAdapter
 
         searchAdapter.setOnItemClickListener { track ->
-            mainViewModel.setPlaylist(searchAdapter.getCurrentTracks())
-            mainViewModel.playTrack(track)
+            mainViewModel.playTracks(searchAdapter.getCurrentTracks(), track)
         }
     }
 
@@ -78,6 +79,8 @@ class SearchFragment : Fragment() {
     private fun setupCategories() {
         val categories = listOf(
             Category("Pop",         android.graphics.Color.parseColor("#E13300")),
+            Category("Hindi",       android.graphics.Color.parseColor("#1DB954")),
+            Category("English",     android.graphics.Color.parseColor("#FC3C44")),
             Category("Rock",        android.graphics.Color.parseColor("#E91429")),
             Category("Hip-Hop",     android.graphics.Color.parseColor("#BC5900")),
             Category("Classical",   android.graphics.Color.parseColor("#7D4B32")),
@@ -168,20 +171,24 @@ class SearchFragment : Fragment() {
             val deezerDeferred  = async { deezerRepository.searchTracks(query,  limit = 20) }
             val itunesDeferred  = async { itunesRepository.searchTracks(query,  limit = 15) }
             val jamendoDeferred = async { jamendoRepository.searchTracks(query, limit = 15) }
+            val audiusDeferred  = async { audiusRepository.searchTracks(query,  limit = 25) }
 
             val deezerTracks  = deezerDeferred.await().getOrElse { emptyList() }
             val itunesTracks  = itunesDeferred.await().getOrElse { emptyList() }
             val jamendoTracks = jamendoDeferred.await().getOrElse { emptyList() }
+            val audiusTracks  = audiusDeferred.await().getOrElse { emptyList() }
 
             // Interleave results: D, I, J, D, I, J … so every source is visible
             val combined = buildList {
                 val d = deezerTracks.iterator()
                 val i = itunesTracks.iterator()
                 val j = jamendoTracks.iterator()
-                while (d.hasNext() || i.hasNext() || j.hasNext()) {
+                val a = audiusTracks.iterator()
+                while (d.hasNext() || i.hasNext() || j.hasNext() || a.hasNext()) {
                     if (d.hasNext()) add(d.next())
                     if (i.hasNext()) add(i.next())
                     if (j.hasNext()) add(j.next())
+                    if (a.hasNext()) add(a.next())
                 }
             }
 

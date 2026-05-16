@@ -33,6 +33,8 @@ class HomeFragment : Fragment() {
 
     // Jamendo
     private lateinit var jamendoTrackAdapter: TrackAdapter
+    private lateinit var hindiEnglishAdapter: TrackAdapter
+    private lateinit var audiusTrackAdapter: TrackAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,8 +69,7 @@ class HomeFragment : Fragment() {
         binding.recyclerViewNewReleases.adapter = deezerTrackAdapter
         deezerTrackAdapter.setOnItemClickListener { track ->
             val playlist = homeViewModel.tracks.value ?: emptyList()
-            mainViewModel.setPlaylist(playlist)
-            mainViewModel.playTrack(track)
+            mainViewModel.playTracks(playlist, track)
         }
 
         // ── iTunes: Top Picks (horizontal) ──
@@ -78,8 +79,16 @@ class HomeFragment : Fragment() {
         binding.recyclerViewItunes.adapter = itunesTrackAdapter
         itunesTrackAdapter.setOnItemClickListener { track ->
             val playlist = homeViewModel.itunesTracks.value ?: emptyList()
-            mainViewModel.setPlaylist(playlist)
-            mainViewModel.playTrack(track)
+            mainViewModel.playTracks(playlist, track)
+        }
+
+        binding.recyclerViewHindiEnglish.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        hindiEnglishAdapter = TrackAdapter()
+        binding.recyclerViewHindiEnglish.adapter = hindiEnglishAdapter
+        hindiEnglishAdapter.setOnItemClickListener { track ->
+            val playlist = homeViewModel.hindiEnglishTracks.value ?: emptyList()
+            mainViewModel.playTracks(playlist, track)
         }
 
         // ── Jamendo: Free Full Songs (horizontal) ──
@@ -89,8 +98,16 @@ class HomeFragment : Fragment() {
         binding.recyclerViewJamendo.adapter = jamendoTrackAdapter
         jamendoTrackAdapter.setOnItemClickListener { track ->
             val playlist = homeViewModel.jamendoTracks.value ?: emptyList()
-            mainViewModel.setPlaylist(playlist)
-            mainViewModel.playTrack(track)
+            mainViewModel.playTracks(playlist, track)
+        }
+
+        binding.recyclerViewAudius.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        audiusTrackAdapter = TrackAdapter()
+        binding.recyclerViewAudius.adapter = audiusTrackAdapter
+        audiusTrackAdapter.setOnItemClickListener { track ->
+            val playlist = homeViewModel.audiusTracks.value ?: emptyList()
+            mainViewModel.playTracks(playlist, track)
         }
 
         // ── Deezer: Top Albums (horizontal) ──
@@ -112,8 +129,7 @@ class HomeFragment : Fragment() {
             val gridTracks = tracks.take(6)
             binding.recyclerViewGrid.adapter =
                 HomeGridAdapter(gridTracks) { track ->
-                    mainViewModel.setPlaylist(tracks)
-                    mainViewModel.playTrack(track)
+                    mainViewModel.playTracks(tracks, track)
                 }
         }
 
@@ -129,10 +145,22 @@ class HomeFragment : Fragment() {
             }
         }
 
+        homeViewModel.hindiEnglishTracks.observe(viewLifecycleOwner) { tracks ->
+            if (!tracks.isNullOrEmpty()) {
+                hindiEnglishAdapter.setTracks(tracks)
+            }
+        }
+
         // Jamendo free full songs
         homeViewModel.jamendoTracks.observe(viewLifecycleOwner) { tracks ->
             if (!tracks.isNullOrEmpty()) {
                 jamendoTrackAdapter.setTracks(tracks)
+            }
+        }
+
+        homeViewModel.audiusTracks.observe(viewLifecycleOwner) { tracks ->
+            if (!tracks.isNullOrEmpty()) {
+                audiusTrackAdapter.setTracks(tracks)
             }
         }
 
@@ -142,7 +170,9 @@ class HomeFragment : Fragment() {
             binding.recyclerViewGrid.alpha = alpha
             binding.recyclerViewNewReleases.alpha = alpha
             binding.recyclerViewItunes.alpha = alpha
+            binding.recyclerViewHindiEnglish.alpha = alpha
             binding.recyclerViewJamendo.alpha = alpha
+            binding.recyclerViewAudius.alpha = alpha
         }
 
         // Non-fatal error toast

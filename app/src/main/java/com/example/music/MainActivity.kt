@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
@@ -39,6 +40,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var miniPlayerPlayPause: ImageView
     private lateinit var miniPlayerProgress: ProgressBar
     private lateinit var navController: NavController
+    private var activeQueueSignature: String = ""
+    private var syncingFromController = false
 
     // ── Progress polling ──────────────────────────────────────────────────────
     // 500 ms instead of 1000 ms → smoother time display and seekbar movement
@@ -120,6 +123,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                syncUiWithController(mediaItem)
+            }
+
             // ── Catches timeline/metadata updates (e.g. live streams) ─────────
             override fun onEvents(player: Player, events: Player.Events) {
                 if (events.containsAny(
@@ -153,7 +160,9 @@ class MainActivity : AppCompatActivity() {
 
         // New track selected → load into ExoPlayer, reset position
         mainViewModel.currentTrack.observe(this) { track ->
-            track?.let { prepareTrack(it) }
+            if (!syncingFromController) {
+                track?.let { prepareQueue(it) }
+            }
         }
 
         // Play / pause from UI
@@ -168,6 +177,7 @@ class MainActivity : AppCompatActivity() {
                         ctrl.pause()
                         progressHandler.removeCallbacks(updateProgressRunnable)
                     }
+                    else -> {}
                 }
             }
             miniPlayerPlayPause.setImageResource(
@@ -224,14 +234,14 @@ class MainActivity : AppCompatActivity() {
 
     // ── Track loading ─────────────────────────────────────────────────────────
 
-    private fun prepareTrack(track: Track) {
+    private fun prepareQueue(track: Track) {
         val ctrl = mediaController ?: return
+        val queue = buildPlayableQueue(track)
+        if (queue.isEmpty()) return
+        val startIndex = queue.indexOfFirst { it.id == track.id }.coerceAtLeast(0)
 
         // Update mini-player UI immediately
-        miniPlayerContainer.visibility = View.VISIBLE
-        miniPlayerTitle.text  = track.title
-        miniPlayerArtist.text = track.artist.name
-        Glide.with(this).load(track.album.coverMedium).into(miniPlayerImage)
+        updateMiniPlayer(track)
 
         // Reset position and duration — real duration arrives via STATE_READY callback
         mainViewModel.setCurrentPosition(0)
@@ -239,17 +249,66 @@ class MainActivity : AppCompatActivity() {
         miniPlayerProgress.progress = 0
         miniPlayerProgress.max      = 0
 
-        // Hand the stream URL to ExoPlayer
-        val mediaItem = MediaItem.Builder()
-            .setMediaId(track.id.toString())
-            .setUri(track.preview)
-            .build()
-
-        ctrl.setMediaItem(mediaItem)
+        val queueSignature = queue.joinToString("|") { "${it.id}:${it.preview}" }
+        if (queueSignature != activeQueueSignature) {
+            ctrl.setMediaItems(queue.map { it.toMediaItem() }, startIndex, 0L)
+            activeQueueSignature = queueSignature
+        } else if (ctrl.currentMediaItem?.mediaId != track.id.toString()) {
+            ctrl.seekToDefaultPosition(startIndex)
+        }
         ctrl.prepare()   // asynchronous — duration arrives in onPlaybackStateChanged
         ctrl.play()
 
         mainViewModel.setPlaying(true)
         progressHandler.post(updateProgressRunnable)
+    }
+
+    private fun buildPlayableQueue(track: Track): List<Track> {
+        val playable = mainViewModel.playlist.value.orEmpty()
+            .filter { it.preview.isNotBlank() }
+        return when {
+            playable.any { it.id == track.id } -> playable
+            track.preview.isNotBlank() -> listOf(track)
+            else -> emptyList()
+        }
+    }
+
+    private fun Track.toMediaItem(): MediaItem {
+        val artworkUrl = album.coverBig ?: album.coverMedium ?: album.coverSmall
+        return MediaItem.Builder()
+            .setMediaId(id.toString())
+            .setUri(preview)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(title)
+                    .setArtist(artist.name)
+                    .setAlbumTitle(album.title)
+                    .setArtworkUri(artworkUrl?.let(android.net.Uri::parse))
+                    .build()
+            )
+            .build()
+    }
+
+    private fun syncUiWithController(mediaItem: MediaItem?) {
+        val trackId = mediaItem?.mediaId?.toLongOrNull() ?: return
+        val track = mainViewModel.playlist.value
+            ?.firstOrNull { it.id == trackId }
+            ?: return
+        updateMiniPlayer(track)
+        syncingFromController = true
+        mainViewModel.syncControllerTrack(trackId)
+        syncingFromController = false
+        mainViewModel.setCurrentPosition(0)
+    }
+
+    private fun updateMiniPlayer(track: Track) {
+        miniPlayerContainer.visibility = View.VISIBLE
+        miniPlayerTitle.text = track.title
+        miniPlayerArtist.text = track.artist.name
+        Glide.with(this)
+            .load(track.album.coverMedium ?: track.album.coverSmall ?: track.album.coverBig)
+            .placeholder(R.color.spotify_light_grey)
+            .error(R.color.spotify_light_grey)
+            .into(miniPlayerImage)
     }
 }

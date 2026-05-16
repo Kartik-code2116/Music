@@ -122,7 +122,28 @@ class MainViewModel : ViewModel() {
     }
 
     fun playTrack(track: Track) {
+        if (_playlist.value.isNullOrEmpty()) {
+            _playlist.value = listOf(track)
+        }
         _currentTrack.value = track
+        _isPlaying.value = true
+    }
+
+    fun playTracks(tracks: List<Track>, startTrack: Track) {
+        val playableTracks = tracks.filter { it.preview.isNotBlank() }
+        val queue = playableTracks.ifEmpty { listOf(startTrack) }
+        _playlist.value = queue
+        _currentTrack.value = queue.firstOrNull { it.id == startTrack.id } ?: queue.first()
+        _isPlaying.value = true
+    }
+
+    fun syncControllerTrack(trackId: Long?) {
+        val nextTrack = _playlist.value
+            ?.firstOrNull { it.id == trackId }
+            ?: return
+        if (_currentTrack.value?.id != nextTrack.id) {
+            _currentTrack.value = nextTrack
+        }
         _isPlaying.value = true
     }
 

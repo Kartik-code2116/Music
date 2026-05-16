@@ -202,8 +202,8 @@ class PlayerFragment : Fragment() {
             mainViewModel.setPlaying(!playing)
         }
 
-        binding.btnNext.setOnClickListener     { mainViewModel.shiftTrack(true)  }
-        binding.btnPrevious.setOnClickListener { mainViewModel.shiftTrack(false) }
+        binding.btnNext.setOnClickListener     { mainViewModel.shiftTrackWithRepeat(true)  }
+        binding.btnPrevious.setOnClickListener { mainViewModel.shiftTrackWithRepeat(false) }
 
         binding.btnShuffle.setOnClickListener  { mainViewModel.toggleShuffle() }
         binding.btnRepeat.setOnClickListener   { mainViewModel.toggleRepeat()  }
